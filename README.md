@@ -22,7 +22,7 @@ UniversalIoT/
 │   ├── docker-compose.yml # Eclipse Mosquitto broker setup
 │   └── mosquitto/         # Mosquitto configuration
 ├── PLAN.md                # Detailed project checklist & timeline
-└── docker-compose.yml     # Root shortcut to run Mosquitto broker
+└── README.md
 ```
 
 ---
@@ -52,10 +52,13 @@ UniversalIoT/
 cd backend
 npm install
 
-# 1. Start Mock Server (runs on http://localhost:3001)
+# 1. (Opsional) Jalankan MQTT Broker lokal via Docker
+docker compose up -d
+
+# 2. Jalankan Mock Server (http://localhost:3001)
 npm start
 
-# 2. Control devices via Simulator CLI
+# 3. Kontrol perangkat melalui Simulator CLI
 node simulator.js list                  # View all devices
 node simulator.js toggle light-01       # Toggle on/off
 node simulator.js temp thermo-01 26.5   # Adjust thermostat
