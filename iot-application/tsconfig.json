@@ -1,0 +1,22 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@data/*": ["src/data/*"],
+      "@domain/*": ["src/domain/*"],
+      "@presentation/*": ["src/presentation/*"],
+      "@atoms/*": ["src/presentation/components/atoms/*"],
+      "@molecules/*": ["src/presentation/components/molecules/*"],
+      "@organisms/*": ["src/presentation/components/organisms/*"],
+      "@templates/*": ["src/presentation/components/templates/*"],
+      "@screens/*": ["src/presentation/screens/*"],
+      "@navigation/*": ["src/presentation/navigation/*"],
+      "@store/*": ["src/presentation/store/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"]
+}
