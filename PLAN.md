@@ -104,6 +104,7 @@ Phase 8 → Deliverables & Submission               (Hari 5)
 > **Target:** MQTT broker jalan, HTTP mock server jalan, simulator device bisa dijalankan recruiter untuk melihat live update di app.
 
 ### 2.1 Message Contract (Dokumentasikan di README)
+- [x] Dokumentasikan message contract MQTT & HTTP di `backend/README.md` dan root README:
 
 ```
 ── MQTT Topics ──────────────────────────────────────────────────────
@@ -122,103 +123,38 @@ POST /devices/<deviceId>/set  ← {"on": false}
 
 > [!NOTE]
 > Gunakan **unique topic prefix** jika pakai public broker (`test.mosquitto.org`).  
-> Contoh: `home/iot-demo-<randomSuffix>/<deviceId>/state` agar tidak bentrok dengan user lain.
+> Default: `home/demo-iot-app/<deviceId>/state`.
 
 ### 2.2 MQTT Broker — Mosquitto via Docker
+- [x] Buat `docker-compose.yml` di root dan `backend/` (port 1883 TCP & 9001 WebSocket)
+- [x] Buat `backend/mosquitto/config/mosquitto.conf` (websockets listener + persistence)
+- [x] Sediakan fallback broker public (`test.mosquitto.org`) jika host tidak memiliki Docker
 
-- [ ] Buat `docker-compose.yml` di root project:
-  ```yaml
-  version: "3.8"
-  services:
-    mosquitto:
-      image: eclipse-mosquitto:2
-      ports:
-        - "1883:1883"    # TCP MQTT
-        - "9001:9001"    # WebSocket (dipakai MQTT.js di React Native)
-      volumes:
-        - ./mosquitto/config:/mosquitto/config
-        - ./mosquitto/data:/mosquitto/data
-        - ./mosquitto/log:/mosquitto/log
-  ```
-- [ ] Buat `mosquitto/config/mosquitto.conf`:
-  ```
-  listener 1883
-  listener 9001
-  protocol websockets
-  allow_anonymous true
-  persistence true
-  persistence_location /mosquitto/data/
-  log_dest file /mosquitto/log/mosquitto.log
-  ```
-- [ ] Verifikasi broker jalan: `docker compose up -d mosquitto`
-- [ ] Test subscribe: `docker exec -it <container> mosquitto_sub -t "home/#"`
-- [ ] *(Fallback tanpa Docker)* Gunakan `test.mosquitto.org` port `8081` (WebSocket/TLS)
-
-### 2.3 HTTP Mock Server — `json-server` atau Express
-
-**Opsi A — json-server (lebih cepat setup):**
-- [ ] Buat `simulator/db.json` — initial device state:
-  ```json
-  {
-    "devices": [
-      {"id":"light-01",  "name":"Living Room Light",   "type":"light",      "roomId":"room-1","on":true, "brightness":80},
-      {"id":"lock-01",   "name":"Front Door Lock",     "type":"lock",       "roomId":"room-1","on":false,"isLocked":true},
-      {"id":"cam-01",    "name":"Living Room Camera",  "type":"camera",     "roomId":"room-1","on":true},
-      {"id":"thermo-01", "name":"Bedroom Thermostat",  "type":"thermostat", "roomId":"room-2","on":true, "temperature":24,"humidity":61},
-      {"id":"light-02",  "name":"Bedroom Light",       "type":"light",      "roomId":"room-2","on":false,"brightness":60},
-      {"id":"light-03",  "name":"Kitchen Light",       "type":"light",      "roomId":"room-3","on":true, "brightness":100}
-    ],
-    "rooms": [
-      {"id":"room-1","name":"Living Room"},
-      {"id":"room-2","name":"Bedroom"},
-      {"id":"room-3","name":"Kitchen"}
-    ]
-  }
-  ```
-- [ ] Jalankan: `npx json-server --watch simulator/db.json --port 3001`
-- [ ] Verifikasi: `curl http://localhost:3001/devices/light-01`
-
-**Opsi B — Express + MQTT publish (recommended — simulator bisa push ke app):**
-- [ ] Buat `simulator/server.js`:
-  - In-memory device state diinisialisasi dari `db.json`
-  - `GET /devices` → return semua device
-  - `GET /devices/:id` → return 1 device
-  - `POST /devices/:id/set` → update state + **publish MQTT** ke `home/:id/state`
-  - Publish `"online"` ke `home/:id/status` (retained) saat startup
-- [ ] Jalankan: `cd simulator && node server.js`
+### 2.3 HTTP Mock Server — Opsi A (json-server)
+- [x] Buat `backend/db.json` dengan data awal 6 devices, 3 rooms, dan automations
+- [x] Buat `backend/routes.json` dan `backend/middleware.js` untuk URL rewrite & CORS
+- [x] Buat `backend/server.js` berbasis engine `json-server` yang mendukung:
+  - `GET /devices`
+  - `GET /devices/:id`
+  - `POST /devices/:id/set` (mengupdate `db.json` & broadcast MQTT)
+  - `GET /rooms`
+- [x] Verifikasi HTTP endpoint berjalan di port 3001
 
 ### 2.4 Device Simulator CLI
-
-> Script untuk recruiter: flip device state dari terminal → app update live.
-
-- [ ] Struktur folder `simulator/`:
-  ```
-  simulator/
-  ├── package.json      # deps: mqtt ^5, express ^4, axios ^1
-  ├── server.js         # HTTP server + MQTT publisher
-  ├── simulator.js      # CLI tool untuk kontrol device dari terminal
-  ├── db.json           # initial state
-  └── README.md         # instruksi lengkap cara pakai simulator
-  ```
-- [ ] `simulator.js` mendukung perintah:
-  ```bash
-  node simulator.js list                      # lihat semua device & state
-  node simulator.js toggle light-01           # flip on/off, publish MQTT
-  node simulator.js set thermo-01 temp 28     # set temperature
-  node simulator.js set light-01 brightness 50
-  node simulator.js offline cam-01            # simulasi device offline
-  ```
-- [ ] Setiap perubahan → publish ke `home/<deviceId>/state` via MQTT
-- [ ] Setiap perubahan → sync ke HTTP state agar `GET /devices` tetap sinkron
+- [x] Buat `backend/simulator.js` (Node.js CLI):
+  - `node simulator.js list` (tabel status perangkat)
+  - `node simulator.js toggle <deviceId>` (flip on/off)
+  - `node simulator.js set <deviceId> <prop> <value>`
+  - `node simulator.js temp <deviceId> <temperature>` (suhu + kelembaban)
+  - `node simulator.js status <deviceId> <online|offline>` (retained MQTT)
+  - `node simulator.js daemon` (listen `home/+/set` & simulasi fluktuasi sensor berkala)
+- [x] Setiap aksi otomatis memperbarui `db.json` dan mempublikasikan status via MQTT
 
 ### 2.5 Verifikasi End-to-End
-
-- [ ] `docker compose up -d` (atau pakai public broker)
-- [ ] `cd simulator && node server.js` di terminal 1
-- [ ] Jalankan app di emulator/device
-- [ ] `node simulator.js toggle light-01` di terminal 2
-- [ ] App update **live tanpa refresh** ✅
-- [ ] `curl -X POST localhost:3001/devices/lock-01/set -d '{"on":true}' -H "Content-Type: application/json"` → app update ✅
+- [x] Verifikasi `GET /devices/light-01`
+- [x] Verifikasi `POST /devices/light-01/set` berhasil memperbarui state
+- [x] Verifikasi CLI `node simulator.js toggle light-01` memperbarui state dan sinkron dengan HTTP server
+- [x] Dokumentasi lengkap di `backend/README.md`
 
 ---
 
