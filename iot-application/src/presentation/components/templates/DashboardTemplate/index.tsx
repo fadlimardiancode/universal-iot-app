@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, useTheme } from 'react-native-paper';
 import { AppText } from '../../atoms/AppText';
 import { AppBadge } from '../../atoms/AppBadge';
 import { AppIcon } from '../../atoms/AppIcon';
@@ -27,6 +27,8 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
   onRefresh,
   refreshing = false,
 }) => {
+  const theme = useTheme();
+
   return (
     <ScrollView
       style={styles.container}
@@ -54,16 +56,39 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
       {/* Next Upcoming Automation Banner */}
       {nextAutomation && (
         <View style={styles.automationBannerWrapper}>
-          <Card style={styles.automationBannerCard}>
+          <Card
+            style={[
+              styles.automationBannerCard,
+              {
+                backgroundColor: theme.dark ? '#221935' : '#F3EDF7',
+                borderColor: theme.dark ? '#4A3B69' : '#E8DEF8',
+                borderWidth: 1,
+              },
+            ]}
+          >
             <Card.Content style={styles.automationBannerContent}>
-              <View style={styles.automationBannerIconBox}>
-                <AppIcon name="clock-outline" size={20} color="#6200ee" />
+              <View
+                style={[
+                  styles.automationBannerIconBox,
+                  { backgroundColor: theme.dark ? '#3B2A5E' : '#E8DEF8' },
+                ]}
+              >
+                <AppIcon
+                  name="clock-outline"
+                  size={20}
+                  color={theme.dark ? '#BB86FC' : '#6200ee'}
+                />
               </View>
               <View style={styles.automationBannerTextCol}>
-                <AppText variant="caption" style={styles.automationBannerHeader}>
+                <AppText
+                  variant="caption"
+                  color={theme.dark ? '#BB86FC' : '#6200ee'}
+                  weight="700"
+                  style={styles.automationBannerHeader}
+                >
                   UPCOMING AUTOMATION • {nextAutomation.time}
                 </AppText>
-                <AppText variant="body2" weight="600">
+                <AppText variant="body2" weight="600" color={theme.colors.onSurface}>
                   {nextAutomation.ruleName}: {nextAutomation.actionText} on {nextAutomation.deviceName}
                 </AppText>
               </View>

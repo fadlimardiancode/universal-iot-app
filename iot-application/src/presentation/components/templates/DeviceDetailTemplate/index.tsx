@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, useTheme } from 'react-native-paper';
 import { AppText } from '../../atoms/AppText';
 import { AppSwitch } from '../../atoms/AppSwitch';
 import { AppButton } from '../../atoms/AppButton';
@@ -19,6 +19,7 @@ export const DeviceDetailTemplate: React.FC<DeviceDetailTemplateProps> = ({
 }) => {
   const isSensor = device.type === 'sensor';
   const protocol = device.protocol || 'mqtt';
+  const theme = useTheme();
 
   return (
     <ScrollView style={styles.container}>
@@ -47,16 +48,16 @@ export const DeviceDetailTemplate: React.FC<DeviceDetailTemplateProps> = ({
           </AppText>
 
           {/* Connection Config Info */}
-          <View style={{ marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#E9ECEF' }}>
-            <AppText variant="caption" style={{ color: '#495057', fontWeight: '600' }}>
+          <View style={{ marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: theme.colors.outlineVariant }}>
+            <AppText variant="caption" color={theme.colors.onSurface} weight="600">
               {protocol === 'mqtt' ? 'MQTT Protocol Config:' : 'HTTP REST Polling Config:'}
             </AppText>
             {protocol === 'mqtt' ? (
-              <AppText variant="caption" style={{ color: '#6C757D' }}>
+              <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
                 Broker: {device.connectionConfig?.brokerUrl || 'ws://localhost:9001'} • Topic: {device.connectionConfig?.topic || `home/${device.id}`}
               </AppText>
             ) : (
-              <AppText variant="caption" style={{ color: '#6C757D' }}>
+              <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
                 Base URL: {device.connectionConfig?.baseUrl || 'http://localhost:3001'} • Poll Interval: {(device.connectionConfig?.pollIntervalMs || 5000) / 1000}s
               </AppText>
             )}
@@ -97,21 +98,21 @@ export const DeviceDetailTemplate: React.FC<DeviceDetailTemplateProps> = ({
                 <AppText variant="h2" style={{ color: '#20C997', fontWeight: '700' }}>
                   {(device.temperature || 24).toFixed(1)}°C
                 </AppText>
-                <AppText variant="caption" style={{ color: '#6C757D' }}>
+                <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
                   Temperature
                 </AppText>
               </View>
-              <View style={{ width: 1, backgroundColor: '#E9ECEF' }} />
+              <View style={{ width: 1, backgroundColor: theme.colors.outlineVariant }} />
               <View style={{ alignItems: 'center' }}>
                 <AppText variant="h2" style={{ color: '#0D6EFD', fontWeight: '700' }}>
                   {device.humidity || 55}%
                 </AppText>
-                <AppText variant="caption" style={{ color: '#6C757D' }}>
+                <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
                   Relative Humidity
                 </AppText>
               </View>
             </View>
-            <AppText variant="caption" style={{ color: '#6C757D', textAlign: 'center', marginTop: 8 }}>
+            <AppText variant="caption" color={theme.colors.onSurfaceVariant} style={{ textAlign: 'center', marginTop: 8 }}>
               Sensors are read-only telemetry devices and do not accept command states.
             </AppText>
           </Card.Content>

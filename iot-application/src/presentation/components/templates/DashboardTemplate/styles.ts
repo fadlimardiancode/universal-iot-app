@@ -25,7 +25,6 @@ export const styles = StyleSheet.create({
   },
   automationBannerCard: {
     borderRadius: 12,
-    backgroundColor: '#F3EDF7',
   },
   automationBannerContent: {
     flexDirection: 'row',
@@ -37,7 +36,6 @@ export const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#E8DEF8',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -46,7 +44,6 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   automationBannerHeader: {
-    opacity: 0.7,
     fontWeight: '700',
     marginBottom: 2,
   },
