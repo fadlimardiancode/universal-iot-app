@@ -258,15 +258,15 @@ Screens     →  template + data dari store (Pages)
 ```
 
 ### 3.1 Navigasi & App Shell
-- [ ] Setup `NavigationContainer` di `App.tsx`
-- [ ] Buat `BottomTabNavigator` dengan tab:
+- [x] Setup `NavigationContainer` di `App.tsx`
+- [x] Buat `BottomTabNavigator` dengan tab:
   - 🏠 **Home** (Dashboard)
   - 🚪 **Rooms**
   - ⚙️ **Automations**
   - 🔧 **Settings**
-- [ ] Buat `StackNavigator` untuk navigasi dalam tab (Room Detail, Device Detail)
-- [ ] Implementasi `SafeAreaProvider` dan `GestureHandlerRootView`
-- [ ] Responsive layout: deteksi phone vs tablet dengan `useWindowDimensions`
+- [x] Buat `StackNavigator` untuk navigasi dalam tab (Room Detail, Device Detail)
+- [x] Implementasi `SafeAreaProvider` dan `GestureHandlerRootView`
+- [x] Responsive layout: deteksi phone vs tablet dengan `useWindowDimensions`
 
 ---
 
@@ -274,13 +274,13 @@ Screens     →  template + data dari store (Pages)
 
 > Stateless, tidak tahu Redux, hanya terima props.
 
-- [ ] **`AppText`** — Typography wrapper (variant: `heading`, `title`, `body`, `caption`, `label`)
-- [ ] **`AppButton`** — Button dengan variant (`primary`, `secondary`, `ghost`, `danger`) + loading state
-- [ ] **`AppIcon`** — Wrapper `react-native-vector-icons` dengan size & color dari theme
-- [ ] **`AppSwitch`** — Toggle switch dengan animasi warna (on = accent, off = surface)
-- [ ] **`AppBadge`** — Badge bulat dengan angka atau dot, untuk notif count
-- [ ] **`AppDivider`** — Garis pembatas horizontal/vertikal
-- [ ] **`AppSkeleton`** — Shimmer placeholder untuk loading state
+- [x] **`AppText`** — Typography wrapper (variant: `heading`, `title`, `body`, `caption`, `label`)
+- [x] **`AppButton`** — Button dengan variant (`primary`, `secondary`, `ghost`, `danger`) + loading state
+- [x] **`AppIcon`** — Wrapper `react-native-vector-icons` dengan size & color dari theme
+- [x] **`AppSwitch`** — Toggle switch dengan animasi warna (on = accent, off = surface)
+- [x] **`AppBadge`** — Badge bulat dengan angka atau dot, untuk notif count
+- [x] **`AppDivider`** — Garis pembatas horizontal/vertikal
+- [x] **`AppSkeleton`** — Shimmer placeholder untuk loading state
 
 > Setiap atom: `index.tsx` + `styles.ts` + unit test minimal.
 
@@ -290,19 +290,19 @@ Screens     →  template + data dari store (Pages)
 
 > Kombinasi 2–3 atoms yang membentuk satu satuan UI fungsional.
 
-- [ ] **`StatusChip`** — `AppIcon` + `AppText` untuk status device (On/Off, Locked/Unlocked)
+- [x] **`StatusChip`** — `AppIcon` + `AppText` untuk status device (On/Off, Locked/Unlocked)
   - Props: `status: 'on' | 'off' | 'locked' | 'unlocked'`
-- [ ] **`DeviceToggleRow`** — `AppIcon` (device type) + `AppText` (nama) + `AppSwitch`
+- [x] **`DeviceToggleRow`** — `AppIcon` (device type) + `AppText` (nama) + `AppSwitch`
   - Props: `name`, `type`, `isOn`, `onToggle`
-- [ ] **`TemperatureControl`** — `AppButton` (`-`) + `AppText` (suhu) + `AppButton` (`+`)
+- [x] **`TemperatureControl`** — `AppButton` (`-`) + `AppText` (suhu) + `AppButton` (`+`)
   - Props: `value`, `min`, `max`, `onIncrease`, `onDecrease`
-- [ ] **`RoomHeader`** — `AppText` (nama room) + `AppBadge` (jumlah device) + `AppButton` (edit)
+- [x] **`RoomHeader`** — `AppText` (nama room) + `AppBadge` (jumlah device) + `AppButton` (edit)
   - Props: `roomName`, `deviceCount`, `onEdit`
-- [ ] **`SummaryCard`** — `AppIcon` + `AppText` (label) + `AppText` (angka besar)
+- [x] **`SummaryCard`** — `AppIcon` + `AppText` (label) + `AppText` (angka besar)
   - Props: `icon`, `label`, `value`, `color`
-- [ ] **`FormField`** — `AppText` (label) + `TextInput` (native) + error message
+- [x] **`FormField`** — `AppText` (label) + `TextInput` (native) + error message
   - Props: `label`, `value`, `onChangeText`, `error?`
-- [ ] **`AutomationRow`** — `AppIcon` (device type) + `AppText` (nama + waktu) + `AppSwitch`
+- [x] **`AutomationRow`** — `AppIcon` (device type) + `AppText` (nama + waktu) + `AppSwitch`
   - Props: `automation`, `onToggle`
 
 ---
@@ -311,25 +311,25 @@ Screens     →  template + data dari store (Pages)
 
 > Kompleks, bisa connect ke hook/selector, membentuk seksi UI yang mandiri.
 
-- [ ] **`DeviceCard`** — Card lengkap per device:
+- [x] **`DeviceCard`** — Card lengkap per device:
   - Gunakan `DeviceToggleRow` (light/lock) atau `TemperatureControl` (thermostat) atau Camera placeholder
   - Tambahkan swipe-to-delete via `react-native-gesture-handler`
   - Props: `device: Device`, `onToggle`, `onRemove`, `onPress`
-- [ ] **`DeviceList`** — `FlatList` dari `DeviceCard`
+- [x] **`DeviceList`** — `FlatList` dari `DeviceCard`
   - Filter: All / On / Off
   - Tombol **Add Device** di bagian bawah
   - `AppSkeleton` saat loading
-- [ ] **`RoomCard`** — Card room dengan nama, jumlah device, preview device aktif
+- [x] **`RoomCard`** — Card room dengan nama, jumlah device, preview device aktif
   - Gunakan `RoomHeader` + row mini `StatusChip`
   - Props: `room: Room`, `devices: Device[]`, `onPress`, `onRename`, `onDelete`
-- [ ] **`RoomGrid`** — Grid/List dari `RoomCard` + tombol **Add Room**
+- [x] **`RoomGrid`** — Grid/List dari `RoomCard` + tombol **Add Room**
   - Responsive: 1 kolom (phone) / 2 kolom (tablet)
-- [ ] **`DashboardSummary`** — Row 3–4 `SummaryCard` (Devices Active, Rooms, Automations, Avg Temp)
-- [ ] **`AutomationCard`** — Card per automation rule menggunakan `AutomationRow`
+- [x] **`DashboardSummary`** — Row 3–4 `SummaryCard` (Devices Active, Rooms, Automations, Avg Temp)
+- [x] **`AutomationCard`** — Card per automation rule menggunakan `AutomationRow`
   - Tombol delete, navigate ke edit
-- [ ] **`AddDeviceForm`** — Form tambah device (nama, tipe, room) dalam Modal/BottomSheet
-- [ ] **`AddRoomForm`** — Form tambah/rename room (nama) dalam Dialog
-- [ ] **`AppBottomTabBar`** — Custom bottom tab bar dengan badge di tab Automations
+- [x] **`AddDeviceForm`** — Form tambah device (nama, tipe, room) dalam Modal/BottomSheet
+- [x] **`AddRoomForm`** — Form tambah/rename room (nama) dalam Dialog
+- [x] **`AppBottomTabBar`** — Custom bottom tab bar dengan badge di tab Automations
 
 ---
 
@@ -337,12 +337,12 @@ Screens     →  template + data dari store (Pages)
 
 > Definisikan slot/region layout. **Tidak boleh import dari Redux store.**
 
-- [ ] **`DashboardTemplate`** — Slot: header, summary section, room grid section
-- [ ] **`RoomListTemplate`** — Slot: header, search bar (opsional), room grid, FAB add room
-- [ ] **`RoomDetailTemplate`** — Slot: room header, filter bar, device list, FAB add device
-- [ ] **`DeviceDetailTemplate`** — Slot: device header, main control area, chart area (opsional)
-- [ ] **`AutomationTemplate`** — Slot: header, automation list, FAB add automation
-- [ ] **`SettingsTemplate`** — Slot: theme toggle, language picker, app info
+- [x] **`DashboardTemplate`** — Slot: header, summary section, room grid section
+- [x] **`RoomListTemplate`** — Slot: header, search bar (opsional), room grid, FAB add room
+- [x] **`RoomDetailTemplate`** — Slot: room header, filter bar, device list, FAB add device
+- [x] **`DeviceDetailTemplate`** — Slot: device header, main control area, chart area (opsional)
+- [x] **`AutomationTemplate`** — Slot: header, automation list, FAB add automation
+- [x] **`SettingsTemplate`** — Slot: theme toggle, language picker, app info
 
 ---
 
@@ -350,37 +350,37 @@ Screens     →  template + data dari store (Pages)
 
 > Screen adalah "Pages" dalam Atomic Design. Inject data dari Redux ke template.
 
-- [ ] **`HomeScreen`** — `DashboardTemplate` + data dari `useSelector(deviceSlice)` & `roomSlice`
+- [x] **`HomeScreen`** — `DashboardTemplate` + data dari `useSelector(deviceSlice)` & `roomSlice`
   - Greeting + tanggal/waktu (via `dayjs`)
   - "Next automation" info
-- [ ] **`RoomsScreen`** — `RoomListTemplate` + data dari `roomSlice` + `deviceSlice`
+- [x] **`RoomsScreen`** — `RoomListTemplate` + data dari `roomSlice` + `deviceSlice`
   - Dispatch `addRoom`, `deleteRoom`, `renameRoom`
-- [ ] **`RoomDetailScreen`** — `RoomDetailTemplate` + filter device by `roomId`
+- [x] **`RoomDetailScreen`** — `RoomDetailTemplate` + filter device by `roomId`
   - Dispatch `addDevice`, `removeDevice`, `toggleDevice`
-- [ ] **`DeviceDetailScreen`** — `DeviceDetailTemplate` + data device by `id`
+- [x] **`DeviceDetailScreen`** — `DeviceDetailTemplate` + data device by `id`
   - Dispatch `adjustTemperature`, `toggleDevice`
   - *(Bonus)* LineChart historical temperature
-- [ ] **`AutomationsScreen`** — `AutomationTemplate` + data dari `automationSlice`
+- [x] **`AutomationsScreen`** — `AutomationTemplate` + data dari `automationSlice`
   - Dispatch `toggleAutomation`, `deleteAutomation`
-- [ ] **`AddAutomationScreen`** — Form screen, dispatch `addAutomation`
-- [ ] **`SettingsScreen`** — `SettingsTemplate` + `themeSlice` dispatch
+- [x] **`AddAutomationScreen`** — Form screen, dispatch `addAutomation`
+- [x] **`SettingsScreen`** — `SettingsTemplate` + `themeSlice` dispatch
 
 ---
 
 ### 3.7 Animasi & UX Polish
-- [ ] Gunakan `react-native-reanimated` untuk:
+- [x] Gunakan `react-native-reanimated` untuk:
   - `AppSwitch`: animasi color transition (Atom level)
   - `DeviceCard`: scale down on press (Organism level)
   - `AppSkeleton`: shimmer pulse (Atom level)
   - Lock icon: rotasi saat toggle (Organism level)
-- [ ] `Snackbar` feedback setiap aksi (toggle, add, delete)
-- [ ] Pull-to-refresh di `RoomGrid`
+- [x] `Snackbar` feedback setiap aksi (toggle, add, delete)
+- [x] Pull-to-refresh di `RoomGrid`
 
 ### 3.8 Dark Mode
-- [ ] Semua komponen hanya gunakan theme tokens dari `useTheme()` (react-native-paper)
-- [ ] Toggle dark/light di `SettingsScreen`
-- [ ] Persist preferensi ke MMKV
-- [ ] Smooth transition saat ganti tema
+- [x] Semua komponen hanya gunakan theme tokens dari `useTheme()` (react-native-paper)
+- [x] Toggle dark/light di `SettingsScreen`
+- [x] Persist preferensi ke MMKV
+- [x] Smooth transition saat ganti tema
 
 ---
 
