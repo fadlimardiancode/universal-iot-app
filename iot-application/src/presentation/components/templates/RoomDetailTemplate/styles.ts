@@ -6,9 +6,11 @@ export const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
+    paddingBottom: 40,
   },
   deviceListWrapper: {
     marginTop: 8,
+    paddingHorizontal: 16,
   },
   fab: {
     position: 'absolute',

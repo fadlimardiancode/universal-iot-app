@@ -25,7 +25,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
         styles.card,
         {
           backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.outline,
+          borderColor: theme.colors.outlineVariant || '#E9ECEF',
         },
       ]}
     >
@@ -34,7 +34,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
           <AppIcon name={icon} size={20} color={accentColor} />
         </View>
         {subtitle && (
-          <AppText variant="caption" color={theme.colors.outline}>
+          <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
             {subtitle}
           </AppText>
         )}
@@ -43,7 +43,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
       <AppText variant="h2" weight="700" color={accentColor}>
         {value}
       </AppText>
-      <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
+      <AppText variant="caption" color={theme.colors.onSurfaceVariant} weight="600">
         {label}
       </AppText>
     </TouchableOpacity>

@@ -11,7 +11,6 @@ import { styles } from './styles';
 import { DashboardTemplateProps } from './types';
 
 export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
-  mqttConnected,
   totalDevices,
   onlineDevices,
   activeRooms,
@@ -19,6 +18,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
   rooms,
   devices,
   favoriteDevices,
+  mqttConnected,
   nextAutomation,
   onDevicePress,
   onDeviceToggle,
@@ -84,6 +84,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
           Rooms
         </AppText>
         <RoomGrid
+          showHeader={false}
           rooms={rooms}
           devices={devices}
           onSelectRoom={(roomId) => onRoomPress(roomId)}

@@ -31,7 +31,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
         styles.card,
         {
           backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.outline,
+          borderColor: theme.colors.outlineVariant || '#E9ECEF',
         },
       ]}
     >
@@ -52,7 +52,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
               name={getRoomIcon()}
               size={24}
               color={
-                activeDevices > 0 ? theme.colors.primary : theme.colors.outline
+                activeDevices > 0 ? theme.colors.primary : theme.colors.onSurfaceVariant
               }
             />
           </View>
@@ -61,7 +61,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
             <AppText variant="subtitle1" weight="700">
               {room.name}
             </AppText>
-            <AppText variant="caption" color={theme.colors.outline}>
+            <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
               {totalDevices} {totalDevices === 1 ? 'device' : 'devices'}
             </AppText>
           </View>
@@ -82,7 +82,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
               styles.miniDeviceBadge,
               {
                 backgroundColor: d.isOn
-                  ? `${theme.colors.primary}14`
+                  ? `${theme.colors.primary}1A`
                   : theme.colors.surfaceVariant,
               },
             ]}
@@ -98,11 +98,12 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                   : 'lock'
               }
               size={14}
-              color={d.isOn ? theme.colors.primary : theme.colors.outline}
+              color={d.isOn ? theme.colors.primary : theme.colors.onSurfaceVariant}
             />
             <AppText
               variant="caption"
-              color={d.isOn ? theme.colors.primary : theme.colors.outline}
+              color={d.isOn ? theme.colors.primary : theme.colors.onSurfaceVariant}
+              weight="600"
             >
               {d.name.split(' ')[0]}
             </AppText>
@@ -119,7 +120,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
         <View style={{ flexDirection: 'row', gap: 12 }}>
           {onRename && (
             <TouchableOpacity onPress={onRename} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <AppIcon name="pencil-outline" size={18} color={theme.colors.outline} />
+              <AppIcon name="pencil-outline" size={18} color={theme.colors.onSurfaceVariant} />
             </TouchableOpacity>
           )}
           {onDelete && (

@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     padding: AppSpacing.md,
     borderRadius: AppSpacing.borderRadius.lg,
     borderWidth: 1,
-    marginVertical: AppSpacing.xs,
+    marginVertical: 6,
   },
   topRow: {
     flexDirection: 'row',
@@ -30,14 +30,15 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginTop: AppSpacing.xs,
+    marginBottom: 4,
     flexWrap: 'wrap',
   },
   miniDeviceBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: AppSpacing.borderRadius.sm,
   },
   bottomRow: {

@@ -66,7 +66,7 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
         styles.card,
         {
           backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.outline,
+          borderColor: theme.colors.outlineVariant || '#E9ECEF',
         },
       ]}
     >
@@ -78,7 +78,7 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
               {device.name}
             </AppText>
           </View>
-          <AppText variant="caption" color={theme.colors.outline}>
+          <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
             {device.roomId} • {device.type.toUpperCase()}
             {device.type === 'light' && device.brightness !== undefined ? ` • ${device.brightness}%` : ''}
           </AppText>
@@ -185,7 +185,7 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
         </View>
       ) : (
         <View style={styles.bodyRow}>
-          <AppText variant="body2" color={device.isOn ? theme.colors.primary : theme.colors.outline} weight="600">
+          <AppText variant="body2" color={device.isOn ? theme.colors.primary : theme.colors.onSurfaceVariant} weight="600">
             {device.type === 'lock'
               ? device.isOn
                 ? 'Unlocked'

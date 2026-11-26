@@ -7,6 +7,8 @@ export const styles = StyleSheet.create({
   scroll: {
     flex: 1,
     paddingTop: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
   },
   fab: {
     position: 'absolute',

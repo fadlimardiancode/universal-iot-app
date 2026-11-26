@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 32,
   },
   header: {
     flexDirection: 'row',
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
   },
   automationBannerWrapper: {
     paddingHorizontal: 16,
-    marginVertical: 4,
+    marginVertical: 6,
   },
   automationBannerCard: {
     borderRadius: 12,
@@ -29,8 +30,8 @@ export const styles = StyleSheet.create({
   automationBannerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   automationBannerIconBox: {
     width: 36,
@@ -50,11 +51,11 @@ export const styles = StyleSheet.create({
     marginBottom: 2,
   },
   section: {
-    marginTop: 12,
+    marginTop: 20,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
-    paddingHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 10,
     fontWeight: '700',
   },
 });

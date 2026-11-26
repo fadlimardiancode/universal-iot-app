@@ -11,6 +11,7 @@ import { styles } from './styles';
 export const RoomGrid: React.FC<RoomGridProps> = ({
   rooms,
   devices,
+  showHeader = true,
   onSelectRoom,
   onRenameRoom,
   onDeleteRoom,
@@ -20,12 +21,14 @@ export const RoomGrid: React.FC<RoomGridProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <AppText variant="h3">Rooms ({rooms.length})</AppText>
-        {onAddRoom && (
-          <AppButton label="+ Add Room" size="sm" variant="outlined" onPress={onAddRoom} />
-        )}
-      </View>
+      {showHeader && (
+        <View style={styles.header}>
+          <AppText variant="h3">Rooms ({rooms.length})</AppText>
+          {onAddRoom && (
+            <AppButton label="+ Add Room" size="sm" variant="outlined" onPress={onAddRoom} />
+          )}
+        </View>
+      )}
 
       {rooms.length === 0 ? (
         <View style={styles.empty}>
