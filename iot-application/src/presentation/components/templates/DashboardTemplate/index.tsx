@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
+import { Card } from 'react-native-paper';
 import { AppText } from '../../atoms/AppText';
 import { AppBadge } from '../../atoms/AppBadge';
+import { AppIcon } from '../../atoms/AppIcon';
 import { DashboardSummary } from '../../organisms/DashboardSummary';
 import { DeviceList } from '../../organisms/DeviceList';
 import { RoomGrid } from '../../organisms/RoomGrid';
@@ -17,6 +19,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
   rooms,
   devices,
   favoriteDevices,
+  nextAutomation,
   onDevicePress,
   onDeviceToggle,
   onAdjustTemp,
@@ -47,6 +50,27 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
           color={mqttConnected ? '#198754' : '#6C757D'}
         />
       </View>
+
+      {/* Next Upcoming Automation Banner */}
+      {nextAutomation && (
+        <View style={styles.automationBannerWrapper}>
+          <Card style={styles.automationBannerCard}>
+            <Card.Content style={styles.automationBannerContent}>
+              <View style={styles.automationBannerIconBox}>
+                <AppIcon name="clock-outline" size={20} color="#6200ee" />
+              </View>
+              <View style={styles.automationBannerTextCol}>
+                <AppText variant="caption" style={styles.automationBannerHeader}>
+                  UPCOMING AUTOMATION • {nextAutomation.time}
+                </AppText>
+                <AppText variant="body2" weight="600">
+                  {nextAutomation.ruleName}: {nextAutomation.actionText} on {nextAutomation.deviceName}
+                </AppText>
+              </View>
+            </Card.Content>
+          </Card>
+        </View>
+      )}
 
       <DashboardSummary
         totalDevices={totalDevices}

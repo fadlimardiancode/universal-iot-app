@@ -16,6 +16,7 @@ import { fetchAutomations } from './src/presentation/store/automationSlice';
 import { setMqttConnected } from './src/presentation/store/connectivitySlice';
 import { mqttService } from './src/data/datasources/MqttService';
 import { deviceRepository } from './src/data/repositories/DeviceRepositoryImpl';
+import { automationScheduler } from './src/core/services/AutomationScheduler';
 import { lightTheme, darkTheme } from './src/core/theme';
 import { AppNavigator } from './src/presentation/navigation/AppNavigator';
 
@@ -30,7 +31,7 @@ const MainApp: React.FC = () => {
 
   const theme = isDarkMode ? darkTheme : lightTheme;
 
-  // Initialize data and MQTT lifecycle
+  // Initialize data, MQTT lifecycle, and Automation Scheduler
   useEffect(() => {
     dispatch(fetchDevices());
     dispatch(fetchRooms());
@@ -52,10 +53,14 @@ const MainApp: React.FC = () => {
       }
     );
 
+    // Start local Automation Scheduler
+    automationScheduler.start();
+
     return () => {
       unsubConn();
       unsubUpdates();
       mqttService.disconnect();
+      automationScheduler.stop();
     };
   }, [dispatch]);
 

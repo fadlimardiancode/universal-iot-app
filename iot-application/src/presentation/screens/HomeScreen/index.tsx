@@ -8,6 +8,7 @@ import {
 } from '../../store/deviceSlice';
 import { DashboardTemplate } from '../../components/templates';
 import { RootStackParamList } from '../../navigation/types';
+import { automationScheduler } from '../../../core/services/AutomationScheduler';
 
 export const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ export const HomeScreen: React.FC = () => {
 
   const devices = useAppSelector((state) => state.devices.devices);
   const rooms = useAppSelector((state) => state.rooms.rooms);
+  const automations = useAppSelector((state) => state.automations.automations);
   const isMqttConnected = useAppSelector((state) => state.connectivity.mqttConnected);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -28,6 +30,26 @@ export const HomeScreen: React.FC = () => {
     thermoDevices.length > 0
       ? thermoDevices.reduce((acc, curr) => acc + (curr.temperature ?? 0), 0) / thermoDevices.length
       : undefined;
+
+  // Next scheduled automation info
+  const nextScheduled = automationScheduler.getNextAutomation();
+  const nextTargetDevice = nextScheduled
+    ? devices.find((d) => d.id === nextScheduled.automation.deviceId)
+    : undefined;
+
+  const nextAutomationInfo = nextScheduled
+    ? {
+        ruleName: nextScheduled.automation.name,
+        time: nextScheduled.automation.scheduledTime,
+        deviceName: nextTargetDevice?.name || nextScheduled.automation.deviceId,
+        actionText:
+          nextScheduled.automation.action === 'turnOn'
+            ? 'Turn ON'
+            : nextScheduled.automation.action === 'turnOff'
+            ? 'Turn OFF'
+            : `Set Temp to ${nextScheduled.automation.value}°C`,
+      }
+    : null;
 
   const handleDevicePress = useCallback(
     (deviceId: string) => {
@@ -78,6 +100,7 @@ export const HomeScreen: React.FC = () => {
       rooms={rooms}
       devices={devices}
       favoriteDevices={devices.slice(0, 5)}
+      nextAutomation={nextAutomationInfo}
       onDevicePress={handleDevicePress}
       onDeviceToggle={handleDeviceToggle}
       onAdjustTemp={handleAdjustTemp}

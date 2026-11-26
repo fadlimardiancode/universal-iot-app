@@ -389,29 +389,29 @@ Screens     →  template + data dari store (Pages)
 > **Target:** Fitur automation rule dan scheduling berjalan dengan timer lokal.
 
 ### 4.1 Automation Screen
-- [ ] FlatList automation rules dengan `AutomationCard` component:
+- [x] FlatList automation rules dengan `AutomationCard` component:
   - Nama rule, device target, waktu, action, toggle aktif/nonaktif
-- [ ] Tombol **Add Automation** → navigasi ke `AddAutomationScreen`
-- [ ] Swipe-to-delete atau menu delete
-- [ ] Toggle aktif/nonaktif per rule (via `toggleAutomation` reducer)
+- [x] Tombol **Add Automation** → navigasi ke `AddAutomationScreen`
+- [x] Swipe-to-delete atau menu delete
+- [x] Toggle aktif/nonaktif per rule (via `toggleAutomation` reducer)
 
 ### 4.2 Add Automation Screen
-- [ ] Dropdown pilih device (dari semua device yang ada)
-- [ ] Dropdown pilih aksi: Turn On / Turn Off / Set Temperature
-- [ ] `TimePickerModal` untuk pilih waktu (HH:mm) — gunakan `@react-native-community/datetimepicker`
-- [ ] TextInput nama rule (opsional)
-- [ ] Tombol **Save** → dispatch `addAutomation`
+- [x] Dropdown pilih device (dari semua device yang ada)
+- [x] Dropdown pilih aksi: Turn On / Turn Off / Set Temperature
+- [x] `TimePickerModal` untuk pilih waktu (HH:mm) — gunakan `@react-native-community/datetimepicker` / custom time picker
+- [x] TextInput nama rule (opsional)
+- [x] Tombol **Save** → dispatch `addAutomation`
 
 ### 4.3 Scheduler Logic
-- [ ] Buat `AutomationScheduler.ts` service
-- [ ] Setup interval `setInterval` setiap 60 detik, cek waktu sekarang vs schedule
-- [ ] Jalankan scheduler di `App.tsx` via `useEffect` (atau `AppRegistry`)
-- [ ] Ketika match: dispatch action ke Redux store (eksekusi device action)
-- [ ] Log eksekusi di console (untuk debug)
+- [x] Buat `AutomationScheduler.ts` service
+- [x] Setup interval `setInterval` setiap 60 detik (atau 5 detik precision), cek waktu sekarang vs schedule
+- [x] Jalankan scheduler di `App.tsx` via `useEffect` (atau `AppRegistry`)
+- [x] Ketika match: dispatch action ke Redux store (eksekusi device action)
+- [x] Log eksekusi di console (untuk debug)
 
 ### 4.4 Display Active Schedules
-- [ ] Badge count di tab **Automations** (jumlah active rules)
-- [ ] "Next automation" info di Dashboard (device apa, jam berapa)
+- [x] Badge count di tab **Automations** (jumlah active rules)
+- [x] "Next automation" info di Dashboard (device apa, jam berapa)
 
 ---
 

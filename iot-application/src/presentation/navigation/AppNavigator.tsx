@@ -1,7 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { useTheme } from 'react-native-paper';
+import { useAppSelector } from '../store';
 import { AppIcon } from '../components/atoms/AppIcon';
 import {
   HomeScreen,
@@ -19,6 +20,8 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const MainTabs: React.FC = () => {
   const theme = useTheme();
+  const automations = useAppSelector((state) => state.automations.automations);
+  const activeAutomationsCount = automations.filter((a) => a.isActive).length;
 
   return (
     <Tab.Navigator
@@ -49,7 +52,10 @@ const MainTabs: React.FC = () => {
       <Tab.Screen
         name="Automations"
         component={AutomationsScreen}
-        options={{ title: 'Automations' }}
+        options={{
+          title: 'Automations',
+          tabBarBadge: activeAutomationsCount > 0 ? activeAutomationsCount : undefined,
+        }}
       />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: 'Settings' }} />
     </Tab.Navigator>
