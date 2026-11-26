@@ -22,14 +22,15 @@
 ## 🚀 Phase Overview
 
 ```
-Phase 1 → Project Setup & Architecture            (Hari 1 pagi)
-Phase 2 → Infrastructure & Device Simulator       (Hari 1 pagi-siang) ← NEW
-Phase 3 → Data Layer, MQTT/HTTP & State Mgmt      (Hari 1 siang-malam)
-Phase 4 → UI & Fitur Utama (Atomic Design)        (Hari 2–3)
-Phase 5 → Automation & Scheduling                 (Hari 3–4)
-Phase 6 → Testing & Polish                        (Hari 4–5)
-Phase 7 → Bonus Features                          (Opsional, Hari 5)
-Phase 8 → Deliverables & Submission               (Hari 5)
+Phase 1 → Project Setup & Architecture                         (Done ✅)
+Phase 2 → Infrastructure & Device Simulator                    (Done ✅)
+Phase 3 → Data Layer, MQTT/HTTP & State Mgmt                   (Done ✅)
+Phase 4 → UI & Fitur Utama (Atomic Design)                     (Done ✅)
+Phase 5 → Automation & Scheduling                              (Done ✅)
+Phase 6 → Protocol Adapters & Multi-Protocol Provisioning      (In Progress 🎯) ← REKOMENDASI BRIEF
+Phase 7 → Testing & Polish                                     (Done ✅)
+Phase 8 → Bonus Features                                       (Opsional)
+Phase 9 → Deliverables & Submission (Video, Slide, Repo)       (Upcoming)
 ```
 
 ---
@@ -483,66 +484,150 @@ Screens     →  template + data dari store (Pages)
 
 ---
 
-## ✅ Phase 6 — Bonus Features (Opsional)
+## 🎯 Phase 6 — Protocol Adapters & Multi-Protocol Device Provisioning (MQTT & HTTP)
+
+> **Target:** Memenuhi 100% persyaratan brief Take-Home Test:
+> 1. Form Add Device dengan pilihan protokol (MQTT & HTTP) dan detail koneksi (broker URL & topic untuk MQTT, base URL untuk HTTP).
+> 2. Tiga device types standar brief: Light (on/off, brightness 0-100), Smart Plug (on/off), Sensor (temp & humidity, read-only).
+> 3. Common Device Model + Protocol Adapters (MQTT & HTTP) di balik satu abstraksi seragam tanpa mengubah UI.
+> 4. Live state update untuk kedua protokol (MQTT via subscription, HTTP via polling).
+> 5. Kesiapan Demo Video: Menambahkan 1 device MQTT dan 1 device HTTP serta kontrol live.
+
+### 6.1 Common Device Model & Type Enhancements
+- [x] Update entity `Device` (`src/domain/entities/Device.ts`):
+  - Tambahkan type `DeviceProtocol = 'mqtt' | 'http'`
+  - Update `DeviceType = 'light' | 'plug' | 'sensor' | 'thermostat' | 'lock' | 'camera'`
+  - Tambahkan struktur `connectionConfig`:
+    ```ts
+    interface DeviceConnectionConfig {
+      brokerUrl?: string;     // MQTT broker URL (e.g. ws://localhost:9001)
+      topic?: string;         // MQTT state/command topic
+      baseUrl?: string;       // HTTP server URL (e.g. http://localhost:3001)
+      pollIntervalMs?: number;// HTTP polling interval (default 5000ms)
+    }
+    ```
+  - Pastikan property `protocol: DeviceProtocol` dan `connectionConfig?: DeviceConnectionConfig` tersimpan di state & MMKV.
+
+### 6.2 Protocol Adapter Pattern (`src/data/adapters/`)
+- [x] Buat interface abstraksi `IProtocolAdapter` (`src/domain/repositories/IProtocolAdapter.ts`):
+  ```ts
+  interface IProtocolAdapter {
+    protocol: DeviceProtocol;
+    sendState(device: Device, payload: MqttSetPayload): Promise<boolean>;
+    subscribe(
+      device: Device,
+      onUpdate: (payload: MqttStatePayload) => void,
+      onStatus: (status: DeviceStatus) => void
+    ): () => void;
+    disconnect?(): void;
+  }
+  ```
+- [x] Implementasikan `MqttProtocolAdapter` (`src/data/adapters/MqttProtocolAdapter.ts`):
+  - Membungkus `MqttService`
+  - Mengirim perintah ke topic spesifik perangkat (`home/<deviceId>/set`)
+  - Berlangganan ke topic state (`home/<deviceId>/state`) dan status (`home/<deviceId>/status`)
+- [x] Implementasikan `HttpProtocolAdapter` (`src/data/adapters/HttpProtocolAdapter.ts`):
+  - Mengirim perintah ke endpoint spesifik (`POST /devices/:id/set`)
+  - Mengimplementasikan **live state polling** otomatis (`setInterval` tiap 5 detik ke `GET /devices/:id`) agar state perangkat HTTP tetap sinkron di UI tanpa manual refresh
+- [x] Integrasikan `ProtocolAdapterRegistry` / refactor `DeviceRepositoryImpl`:
+  - `DeviceRepository` mendelegasikan perintah berdasarkan `device.protocol`
+  - UI tetap hanya berinteraksi dengan `Device` dan `DeviceRepository` (UI sama sekali tidak tahu protokol apa yang ada di baliknya)
+
+### 6.3 Multi-Protocol "Add Device" Form UI (`AddDeviceForm`)
+- [x] Tambahkan pemilih protokol di `AddDeviceForm`:
+  - `SegmentedButtons` memilih: **MQTT** atau **HTTP**
+- [x] Tambahkan pemilih 3 tipe standar brief:
+  - 💡 **Light** (on/off, brightness 0-100)
+  - 🔌 **Smart Plug** (on/off)
+  - 🌡️ **Sensor** (temperature & humidity, read-only)
+- [x] Dynamic connection fields berdasarkan protokol terpilih:
+  - **Jika MQTT:**
+    - Input `Broker URL` (default: `ws://localhost:9001`)
+    - Input `Topic Prefix / Topic` (default: `home/demo-iot-app/<deviceId>`)
+  - **Jika HTTP:**
+    - Input `Base URL` (default: `http://localhost:3001`)
+    - Input `Polling Interval (detik)` (default: `5`)
+- [x] Validasi form & simpan device baru dengan protokol dan config yang lengkap ke Redux store & MMKV
+
+### 6.4 UI & Controls Per Device Type
+- [x] **Smart Plug Card & Detail:**
+  - Tampilan kontrol switch ON/OFF simpel dengan daya aktif
+- [x] **Sensor Card & Detail:**
+  - Tampilan metrik Temperature (°C) dan Humidity (%) secara read-only tanpa toggle power
+- [x] **Light Card & Detail:**
+  - Toggle ON/OFF dan preset brightness (25%, 50%, 75%, 100%)
+- [x] Indikator protokol pada DeviceCard:
+  - Badge visual `[MQTT]` atau `[HTTP]` pada setiap kartu perangkat agar terlihat jelas saat demo video
+
+### 6.5 Testing & Demo Video Checklist Verification
+- [x] Unit test untuk `MqttProtocolAdapter` dan `HttpProtocolAdapter` (mocked transport)
+- [x] Unit test verifikasi penambahan 1 perangkat MQTT dan 1 perangkat HTTP
+- [x] Verifikasi skenario Demo Video:
+  - [x] 1. Adding one MQTT device and one HTTP device melalui form UI
+  - [x] 2. Controlling a light and a plug from the app
+  - [x] 3. Changing a device's state from the simulator and the app updating live
+  - [x] 4. At least one error case, such as a broker that can't be reached (menampilkan banner/pesan jelas)
+
+---
+
+## ✅ Phase 8 — Bonus Features (Opsional)
 
 > **Target:** Tingkatkan skor evaluasi dengan fitur tambahan.
 
-### 6.1 Local Push Notifications
+### 8.1 Local Push Notifications
 - [ ] Install `@notifee/react-native`
 - [ ] Request permission notifikasi
 - [ ] Trigger notifikasi dari `AutomationScheduler` ketika rule dieksekusi
 - [ ] Notifikasi tampilkan: nama rule + device + aksi yang dilakukan
 
-### 6.2 Charts/Graphs (Thermostat)
+### 8.2 Charts/Graphs (Thermostat)
 - [ ] Install `react-native-chart-kit` atau `victory-native`
 - [ ] Buat mock historical temperature data (24 titik per jam)
 - [ ] Tampilkan `LineChart` di Device Detail screen (thermostat)
 - [ ] Label X-axis: jam (00:00 – 23:00), Y-axis: suhu (°C)
 
-### 6.3 Multi-language (Lokalisasi)
+### 8.3 Multi-language (Lokalisasi)
 - [ ] Install `react-i18next` + `i18next`
 - [ ] Buat file translasi `en.json` dan `id.json`
 - [ ] Language switcher di Settings screen
 - [ ] Persist pilihan bahasa ke MMKV
 
-### 6.4 Custom Themes
+### 8.4 Custom Themes
 - [ ] Buat 2+ color scheme custom (misal: Ocean Blue, Warm Amber)
 - [ ] Theme selector UI di Settings screen
 - [ ] Persist pilihan theme ke MMKV
 
-### 6.5 Accessibility
+### 8.5 Accessibility
 - [ ] Tambahkan `accessibilityLabel` dan `accessibilityHint` pada semua interactive elements
 - [ ] Pastikan contrast ratio memenuhi WCAG AA
 - [ ] Test dengan TalkBack (Android) / VoiceOver (iOS)
 
 ---
 
-## ✅ Phase 7 — Deliverables & Submission
+## ✅ Phase 9 — Deliverables & Submission
 
 > **Target:** Semua deliverable siap, app di-submit tepat waktu.
 
-### 7.1 GitHub Repository
+### 9.1 GitHub Repository
 - [ ] Repository bersih, commit history rapi & deskriptif
 - [ ] Branch naming jelas (`main` / `dev` / `feature/room-management`)
 - [ ] Tidak ada file sensitif di repo (`.env`, keystore, certificates)
 - [ ] README.md lengkap (lihat Phase 5.4)
 
-### 7.2 APK / TestFlight (Opsional tapi Dianjurkan)
-- [ ] Build release APK:
-  ```bash
-  cd android && ./gradlew assembleRelease
-  ```
-- [ ] Upload ke Google Drive atau GitHub Releases
-- [ ] Sertakan link download di README
+### 9.2 One Architecture Slide (PDF/PNG di `/docs`)
+- [ ] Diagram arsitektur Clean Architecture + Protocol Adapter (UI -> State -> Model -> Protocol Adapters -> Transports)
+- [ ] Diagram data flow untuk command (User tap toggle -> Adapter -> Device)
+- [ ] Diagram data flow untuk state update (Device changes -> Adapter/MQTT/Polling -> Store -> Screen)
 
-### 7.3 Screen Recording (Opsional)
-- [ ] Record demo semua fitur utama (maks 5 menit)
-- [ ] Upload ke YouTube (unlisted) atau Google Drive
-- [ ] Sertakan link di README
+### 9.3 Demo Video (3–5 Menit)
+- [ ] Skenario 1: Adding one MQTT device & one HTTP device
+- [ ] Skenario 2: Controlling a light and a plug from the app
+- [ ] Skenario 3: Changing a device's state from the simulator and the app updating live
+- [ ] Skenario 4: At least one error case (broker offline)
+- [ ] Upload video (YouTube unlisted / Google Drive) & sertakan link di README
 
-### 7.4 Submit
-- [ ] Kirim email ke: `recruiter@company.com`
-- [ ] Sertakan: link repo, link APK, link screen recording
+### 9.4 Submit
+- [ ] Kirim email balasan ke recruiter dengan link repo, link video, dan link slide
 - [ ] Double-check semua link accessible (public)
 
 ---
@@ -557,8 +642,9 @@ Screens     →  template + data dari store (Pages)
 | **Hari 2** | Phase 4: Navigasi, Atoms, Molecules, Organisms — bangun UI dari bawah ke atas |
 | **Hari 3** | Phase 4 (lanjut): Templates, Screens, real-time control, animasi, dark mode |
 | **Hari 4 (Pagi)** | Phase 5: Automation screen & scheduler |
-| **Hari 4 (Siang-Malam)** | Phase 6: Testing, bug fixing, code quality, README |
-| **Hari 5** | Phase 7 (bonus, opsional) + Phase 8: Deliverables & Submit |
+| **Hari 4 (Siang)** | Phase 6: Protocol Adapters & Multi-Protocol Provisioning (MQTT & HTTP) |
+| **Hari 4 (Malam)** | Phase 7: Testing, bug fixing, code quality, README |
+| **Hari 5** | Phase 8 (bonus, opsional) + Phase 9: Deliverables (Video, Slide) & Submit |
 
 ---
 

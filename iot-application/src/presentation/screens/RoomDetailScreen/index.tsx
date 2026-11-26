@@ -10,7 +10,7 @@ import {
 import { deleteRoomAction } from '../../store/roomSlice';
 import { RoomDetailTemplate } from '../../components/templates';
 import { AddDeviceForm } from '../../components/organisms';
-import { DeviceType } from '../../../domain/entities/Device';
+import { DeviceType, DeviceProtocol, DeviceConnectionConfig } from '../../../domain/entities/Device';
 import { RootStackParamList } from '../../navigation/types';
 
 export const RoomDetailScreen: React.FC = () => {
@@ -55,7 +55,13 @@ export const RoomDetailScreen: React.FC = () => {
   );
 
   const handleAddDevice = useCallback(
-    (newDevice: { name: string; type: DeviceType; roomId: string }) => {
+    (newDevice: {
+      name: string;
+      type: DeviceType;
+      roomId: string;
+      protocol: DeviceProtocol;
+      connectionConfig?: DeviceConnectionConfig;
+    }) => {
       dispatch(
         addDeviceAction({
           id: `dev_${Date.now()}`,
@@ -63,9 +69,11 @@ export const RoomDetailScreen: React.FC = () => {
           type: newDevice.type,
           roomId: newDevice.roomId,
           status: 'online',
-          isOn: false,
+          isOn: newDevice.type === 'sensor' ? true : false,
+          protocol: newDevice.protocol,
+          connectionConfig: newDevice.connectionConfig,
           ...(newDevice.type === 'light' ? { brightness: 100 } : {}),
-          ...(newDevice.type === 'thermostat'
+          ...(newDevice.type === 'sensor' || newDevice.type === 'thermostat'
             ? { temperature: 24, humidity: 55 }
             : {}),
         }),

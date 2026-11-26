@@ -1,6 +1,15 @@
-export type DeviceType = 'light' | 'thermostat' | 'camera' | 'lock';
+export type DeviceType = 'light' | 'plug' | 'sensor' | 'thermostat' | 'lock' | 'camera';
+
+export type DeviceProtocol = 'mqtt' | 'http';
 
 export type DeviceStatus = 'online' | 'offline';
+
+export interface DeviceConnectionConfig {
+  brokerUrl?: string;     // for MQTT (e.g. ws://localhost:9001)
+  topic?: string;         // for MQTT state/set topic (e.g. home/demo-iot-app/plug-01)
+  baseUrl?: string;       // for HTTP (e.g. http://localhost:3001)
+  pollIntervalMs?: number;// for HTTP polling (default: 5000)
+}
 
 export interface Device {
   id: string;
@@ -9,8 +18,10 @@ export interface Device {
   roomId: string;
   isOn: boolean;
   status: DeviceStatus;
-  temperature?: number;    // for thermostat (°C)
-  humidity?: number;       // for thermostat/sensor (%)
+  protocol?: DeviceProtocol; // default: 'mqtt'
+  connectionConfig?: DeviceConnectionConfig;
+  temperature?: number;    // for thermostat / sensor (°C)
+  humidity?: number;       // for thermostat / sensor (%)
   brightness?: number;     // for light (0-100)
   isLocked?: boolean;      // for lock
 }

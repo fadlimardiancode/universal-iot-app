@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import {
   toggleDeviceAction,
   adjustTemperatureAction,
+  adjustBrightnessAction,
   removeDeviceAction,
 } from '../../store/deviceSlice';
 import { DeviceDetailTemplate } from '../../components/templates';
@@ -31,10 +32,11 @@ export const DeviceDetailScreen: React.FC = () => {
   );
 
   const handleBrightnessChange = useCallback(
-    (_brightness: number) => {
-      // Light brightness can be wired when endpoint available
+    (brightness: number) => {
+      if (!device) return;
+      dispatch(adjustBrightnessAction({ id: device.id, brightness }));
     },
-    [],
+    [dispatch, device],
   );
 
   const handleTargetTempChange = useCallback(

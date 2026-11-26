@@ -74,13 +74,13 @@ class MqttService {
     }
   }
 
-  publishCommand(deviceId: string, payload: MqttSetPayload): void {
+  publishCommand(deviceId: string, payload: MqttSetPayload, customTopic?: string): void {
     if (!this.client || !this.isConnected) {
       console.warn(`[MqttService] Cannot publish to ${deviceId}: broker not connected`);
       return;
     }
 
-    const topic = `${APP_CONFIG.MQTT_TOPIC_PREFIX}/${deviceId}/set`;
+    const topic = customTopic ? `${customTopic}/set` : `${APP_CONFIG.MQTT_TOPIC_PREFIX}/${deviceId}/set`;
     const message = JSON.stringify(payload);
 
     this.client.publish(topic, message, { qos: 0 }, (err) => {

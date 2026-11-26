@@ -23,6 +23,10 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
     switch (device.type) {
       case 'light':
         return device.isOn ? 'lightbulb-on' : 'lightbulb-outline';
+      case 'plug':
+        return device.isOn ? 'power-plug' : 'power-plug-off';
+      case 'sensor':
+        return 'thermometer-lines';
       case 'thermostat':
         return 'thermometer';
       case 'camera':
@@ -35,10 +39,14 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
   };
 
   const getIconColor = () => {
-    if (!device.isOn) return theme.colors.outline;
+    if (!device.isOn && device.type !== 'sensor') return theme.colors.outline;
     switch (device.type) {
       case 'light':
         return '#FFB703';
+      case 'plug':
+        return '#198754';
+      case 'sensor':
+        return '#20C997';
       case 'thermostat':
         return '#FB8500';
       case 'camera':
@@ -72,10 +80,18 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
           </View>
           <AppText variant="caption" color={theme.colors.outline}>
             {device.roomId} • {device.type.toUpperCase()}
+            {device.type === 'light' && device.brightness !== undefined ? ` • ${device.brightness}%` : ''}
           </AppText>
         </View>
 
-        <StatusChip status={device.status} size="sm" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <AppBadge
+            content={(device.protocol || 'mqtt').toUpperCase()}
+            size={12}
+            color={device.protocol === 'http' ? '#0D6EFD' : '#6610F2'}
+          />
+          <StatusChip status={device.status} size="sm" />
+        </View>
       </View>
 
       {/* Device Specific Content */}
@@ -101,6 +117,24 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
               Camera Inactive
             </AppText>
           )}
+        </View>
+      )}
+
+      {device.type === 'sensor' && (
+        <View style={styles.thermoRow}>
+          <View>
+            <AppText variant="h2" weight="700" color="#20C997">
+              {(device.temperature || 24).toFixed(1)}°C
+            </AppText>
+            <AppText variant="caption" color={theme.colors.outline}>
+              Humidity: {device.humidity || 55}% RH
+            </AppText>
+          </View>
+          <View style={{ backgroundColor: '#20C9971A', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}>
+            <AppText variant="caption" color="#20C997" weight="600">
+              Telemetry Only
+            </AppText>
+          </View>
         </View>
       )}
 
@@ -137,26 +171,40 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
       )}
 
       {/* Bottom Switch & Remove */}
-      <View style={styles.bodyRow}>
-        <AppText variant="body2" color={device.isOn ? theme.colors.primary : theme.colors.outline} weight="600">
-          {device.type === 'lock'
-            ? device.isOn
-              ? 'Unlocked'
-              : 'Locked'
-            : device.isOn
-            ? 'Active'
-            : 'Turned Off'}
-        </AppText>
+      {device.type === 'sensor' ? (
+        <View style={styles.bodyRow}>
+          <AppText variant="body2" color="#20C997" weight="600">
+            Read-Only Sensor
+          </AppText>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           {onRemove && (
             <TouchableOpacity onPress={onRemove} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <AppIcon name="trash-can-outline" size={20} color={theme.colors.error} />
             </TouchableOpacity>
           )}
-          <AppSwitch value={device.isOn} onValueChange={onToggle} />
         </View>
-      </View>
+      ) : (
+        <View style={styles.bodyRow}>
+          <AppText variant="body2" color={device.isOn ? theme.colors.primary : theme.colors.outline} weight="600">
+            {device.type === 'lock'
+              ? device.isOn
+                ? 'Unlocked'
+                : 'Locked'
+              : device.isOn
+              ? 'Active'
+              : 'Turned Off'}
+          </AppText>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {onRemove && (
+              <TouchableOpacity onPress={onRemove} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <AppIcon name="trash-can-outline" size={20} color={theme.colors.error} />
+              </TouchableOpacity>
+            )}
+            <AppSwitch value={device.isOn} onValueChange={onToggle} />
+          </View>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };

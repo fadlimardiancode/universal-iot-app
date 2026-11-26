@@ -49,6 +49,17 @@ export const adjustTemperatureAction = createAsyncThunk<
   }
 });
 
+export const adjustBrightnessAction = createAsyncThunk<
+  Device | null,
+  { id: string; brightness: number }
+>('devices/adjustBrightness', async ({ id, brightness }, { rejectWithValue }) => {
+  try {
+    return await deviceRepository.adjustBrightness(id, brightness);
+  } catch (err: any) {
+    return rejectWithValue(err.message || 'Failed to adjust brightness');
+  }
+});
+
 export const addDeviceAction = createAsyncThunk<Device, Device>(
   'devices/addDevice',
   async (device, { rejectWithValue }) => {
@@ -139,6 +150,15 @@ export const deviceSlice = createSlice({
       })
       // Adjust temperature
       .addCase(adjustTemperatureAction.fulfilled, (state, action) => {
+        if (action.payload) {
+          const index = state.devices.findIndex((d) => d.id === action.payload!.id);
+          if (index !== -1) {
+            state.devices[index] = action.payload;
+          }
+        }
+      })
+      // Adjust brightness
+      .addCase(adjustBrightnessAction.fulfilled, (state, action) => {
         if (action.payload) {
           const index = state.devices.findIndex((d) => d.id === action.payload!.id);
           if (index !== -1) {

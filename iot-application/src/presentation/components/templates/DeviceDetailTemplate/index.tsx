@@ -17,44 +17,108 @@ export const DeviceDetailTemplate: React.FC<DeviceDetailTemplateProps> = ({
   onTargetTempChange,
   onDeleteDevice,
 }) => {
+  const isSensor = device.type === 'sensor';
+  const protocol = device.protocol || 'mqtt';
+
   return (
     <ScrollView style={styles.container}>
       <Card style={styles.headerCard}>
         <Card.Content>
           <View style={styles.statusRow}>
             <AppText variant="caption" style={styles.roomLabel}>
-              {roomName || 'Unassigned'}
+              {roomName || 'Unassigned Room'}
             </AppText>
-            <AppBadge
-              content={device.status.toUpperCase()}
-              color={device.status === 'online' ? '#198754' : '#6C757D'}
-            />
+            <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+              <AppBadge
+                content={protocol.toUpperCase()}
+                color={protocol === 'http' ? '#0D6EFD' : '#6610F2'}
+              />
+              <AppBadge
+                content={device.status.toUpperCase()}
+                color={device.status === 'online' ? '#198754' : '#6C757D'}
+              />
+            </View>
           </View>
           <AppText variant="h2" style={styles.deviceName}>
             {device.name}
           </AppText>
           <AppText variant="caption" style={styles.deviceMeta}>
-            ID: {device.id} • Type: {device.type}
+            ID: {device.id} • Type: {device.type.toUpperCase()}
           </AppText>
-        </Card.Content>
-      </Card>
 
-      {/* Primary Power / State Control */}
-      <Card style={styles.controlCard}>
-        <Card.Content>
-          <View style={styles.switchRow}>
-            <AppText variant="subtitle1">
-              {device.type === 'lock' ? 'Door Lock Status' : 'Power State'}
+          {/* Connection Config Info */}
+          <View style={{ marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#E9ECEF' }}>
+            <AppText variant="caption" style={{ color: '#495057', fontWeight: '600' }}>
+              {protocol === 'mqtt' ? 'MQTT Protocol Config:' : 'HTTP REST Polling Config:'}
             </AppText>
-            <AppSwitch
-              value={device.isOn}
-              onValueChange={onTogglePower}
-            />
+            {protocol === 'mqtt' ? (
+              <AppText variant="caption" style={{ color: '#6C757D' }}>
+                Broker: {device.connectionConfig?.brokerUrl || 'ws://localhost:9001'} • Topic: {device.connectionConfig?.topic || `home/${device.id}`}
+              </AppText>
+            ) : (
+              <AppText variant="caption" style={{ color: '#6C757D' }}>
+                Base URL: {device.connectionConfig?.baseUrl || 'http://localhost:3001'} • Poll Interval: {(device.connectionConfig?.pollIntervalMs || 5000) / 1000}s
+              </AppText>
+            )}
           </View>
         </Card.Content>
       </Card>
 
-      {/* Type-specific Controls */}
+      {/* Primary Power / State Control (Not shown for read-only sensor) */}
+      {!isSensor && (
+        <Card style={styles.controlCard}>
+          <Card.Content>
+            <View style={styles.switchRow}>
+              <AppText variant="subtitle1">
+                {device.type === 'lock'
+                  ? 'Door Lock Status'
+                  : device.type === 'plug'
+                  ? 'Smart Plug Power State'
+                  : 'Power State'}
+              </AppText>
+              <AppSwitch
+                value={device.isOn}
+                onValueChange={onTogglePower}
+              />
+            </View>
+          </Card.Content>
+        </Card>
+      )}
+
+      {/* Sensor Specific Telemetry Display (Read-Only) */}
+      {isSensor && (
+        <Card style={styles.controlCard}>
+          <Card.Content>
+            <AppText variant="subtitle1" style={{ marginBottom: 12 }}>
+              Telemetry Metrics (Read-Only Sensor)
+            </AppText>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 8 }}>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="h2" style={{ color: '#20C997', fontWeight: '700' }}>
+                  {(device.temperature || 24).toFixed(1)}°C
+                </AppText>
+                <AppText variant="caption" style={{ color: '#6C757D' }}>
+                  Temperature
+                </AppText>
+              </View>
+              <View style={{ width: 1, backgroundColor: '#E9ECEF' }} />
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="h2" style={{ color: '#0D6EFD', fontWeight: '700' }}>
+                  {device.humidity || 55}%
+                </AppText>
+                <AppText variant="caption" style={{ color: '#6C757D' }}>
+                  Relative Humidity
+                </AppText>
+              </View>
+            </View>
+            <AppText variant="caption" style={{ color: '#6C757D', textAlign: 'center', marginTop: 8 }}>
+              Sensors are read-only telemetry devices and do not accept command states.
+            </AppText>
+          </Card.Content>
+        </Card>
+      )}
+
+      {/* Light Controls: Brightness */}
       {device.type === 'light' && (
         <Card style={styles.controlCard}>
           <Card.Content>
@@ -76,6 +140,7 @@ export const DeviceDetailTemplate: React.FC<DeviceDetailTemplateProps> = ({
         </Card>
       )}
 
+      {/* Thermostat Controls */}
       {device.type === 'thermostat' && (
         <Card style={styles.controlCard}>
           <Card.Content>
@@ -99,6 +164,7 @@ export const DeviceDetailTemplate: React.FC<DeviceDetailTemplateProps> = ({
         </Card>
       )}
 
+      {/* Camera Live Feed */}
       {device.type === 'camera' && (
         <Card style={styles.controlCard}>
           <Card.Content>

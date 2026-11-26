@@ -13,7 +13,10 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
   type,
   isOn,
   status,
+  protocol = 'mqtt',
   subtitle,
+  temperature,
+  humidity,
   onToggle,
   onPress,
 }) => {
@@ -23,6 +26,10 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
     switch (type) {
       case 'light':
         return isOn ? 'lightbulb-on' : 'lightbulb-outline';
+      case 'plug':
+        return isOn ? 'power-plug' : 'power-plug-off';
+      case 'sensor':
+        return 'thermometer-lines';
       case 'lock':
         return isOn ? 'lock-open-variant' : 'lock';
       case 'camera':
@@ -35,10 +42,14 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
   };
 
   const getIconColor = () => {
-    if (!isOn) return theme.colors.outline;
+    if (!isOn && type !== 'sensor') return theme.colors.outline;
     switch (type) {
       case 'light':
         return '#FFB703';
+      case 'plug':
+        return '#198754';
+      case 'sensor':
+        return '#20C997';
       case 'lock':
         return '#0D6EFD';
       case 'camera':
@@ -61,7 +72,7 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
           style={[
             styles.iconBox,
             {
-              backgroundColor: isOn
+              backgroundColor: (isOn || type === 'sensor')
                 ? `${getIconColor()}1A`
                 : theme.colors.surfaceVariant,
             },
@@ -76,6 +87,11 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
               {name}
             </AppText>
             <AppBadge
+              content={protocol.toUpperCase()}
+              size={12}
+              color={protocol === 'http' ? '#0D6EFD' : '#6610F2'}
+            />
+            <AppBadge
               content={status}
               size={12}
               color={status === 'online' ? '#198754' : '#6C757D'}
@@ -89,7 +105,20 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
         </View>
       </View>
 
-      <AppSwitch value={isOn} onValueChange={onToggle} />
+      {type === 'sensor' ? (
+        <View style={{ alignItems: 'flex-end' }}>
+          <AppText variant="caption" color={theme.colors.primary} weight="700">
+            {temperature !== undefined ? `${temperature}°C` : 'Telemetry'}
+          </AppText>
+          {humidity !== undefined && (
+            <AppText variant="caption" color={theme.colors.outline}>
+              {humidity}% RH
+            </AppText>
+          )}
+        </View>
+      ) : (
+        <AppSwitch value={isOn} onValueChange={onToggle} />
+      )}
     </TouchableOpacity>
   );
 };

@@ -27,6 +27,10 @@ describe('Device Use Cases', () => {
       ...mockDevice,
       temperature: temp,
     })),
+    adjustBrightness: jest.fn(async (id: string, brightness: number) => ({
+      ...mockDevice,
+      brightness,
+    })),
     addDevice: jest.fn(async (dev: Device) => dev),
     removeDevice: jest.fn(async () => true),
     publishCommand: jest.fn(),

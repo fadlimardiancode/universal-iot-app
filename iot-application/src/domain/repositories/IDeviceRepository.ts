@@ -5,6 +5,7 @@ export interface IDeviceRepository {
   getDeviceById(id: string): Promise<Device | null>;
   toggleDevice(id: string, currentState: boolean): Promise<Device | null>;
   adjustTemperature(id: string, temperature: number): Promise<Device | null>;
+  adjustBrightness(id: string, brightness: number): Promise<Device | null>;
   addDevice(device: Device): Promise<Device>;
   removeDevice(id: string): Promise<boolean>;
   publishCommand(id: string, payload: MqttSetPayload): void;
