@@ -14,8 +14,10 @@
     "docker:down": "docker compose down"
   },
   "dependencies": {
+    "aedes": "^1.2.0",
     "axios": "^1.7.9",
     "json-server": "^0.17.4",
-    "mqtt": "^5.10.3"
+    "mqtt": "^5.10.3",
+    "ws": "^8.23.0"
   }
 }

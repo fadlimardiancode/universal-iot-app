@@ -1,0 +1,22 @@
+meta {
+  name: 4. Set Thermostat Temp (Triggers MQTT)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/devices/thermo-01/set
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "temperature": 26.5,
+    "humidity": 55
+  }
+}

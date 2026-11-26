@@ -1,0 +1,22 @@
+meta {
+  name: 3. Toggle Device (Triggers MQTT)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/devices/light-01/set
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "on": false,
+    "brightness": 50
+  }
+}
