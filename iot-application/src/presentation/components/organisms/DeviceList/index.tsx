@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
-import { View, FlatList, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { DeviceCard } from '../DeviceCard';
 import { AppText } from '../../atoms/AppText';
 import { AppIcon } from '../../atoms/AppIcon';
 import { AppButton } from '../../atoms/AppButton';
 import { AppSkeleton } from '../../atoms/AppSkeleton';
-import { DeviceListProps } from './types';
+import { DeviceListProps, FilterType } from './types';
 import { styles } from './styles';
-
-type FilterType = 'all' | 'on' | 'off';
 
 export const DeviceList: React.FC<DeviceListProps> = ({
   devices,
   loading = false,
+  onPressDevice,
   onToggle,
   onAdjustTemp,
-  onPressDevice,
   onRemoveDevice,
   onAddDevice,
 }) => {
   const theme = useTheme();
   const [filter, setFilter] = useState<FilterType>('all');
 
-  const filteredDevices = devices.filter((d) => {
-    if (filter === 'on') return d.isOn;
-    if (filter === 'off') return !d.isOn;
+  const filteredDevices = devices.filter((device) => {
+    if (filter === 'on') return device.isOn;
+    if (filter === 'off') return !device.isOn;
     return true;
   });
 
@@ -71,38 +69,36 @@ export const DeviceList: React.FC<DeviceListProps> = ({
         {renderFilterChip('off', `Off (${devices.filter((d) => !d.isOn).length})`)}
       </View>
 
-      <FlatList
-        data={filteredDevices}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <DeviceCard
-            device={item}
-            onToggle={() => onToggle(item.id, item.isOn)}
-            onAdjustTemp={
-              onAdjustTemp ? (delta) => onAdjustTemp(item.id, delta) : undefined
-            }
-            onPress={onPressDevice ? () => onPressDevice(item.id) : undefined}
-            onRemove={onRemoveDevice ? () => onRemoveDevice(item.id) : undefined}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyBox}>
-            <AppIcon name="devices" size={48} color={theme.colors.outline} />
-            <AppText variant="subtitle1" color={theme.colors.outline}>
-              No devices found
-            </AppText>
-            {onAddDevice && (
-              <AppButton
-                label="Add New Device"
-                variant="outlined"
-                size="sm"
-                onPress={onAddDevice}
-              />
-            )}
-          </View>
-        }
-        ListFooterComponent={
-          onAddDevice && filteredDevices.length > 0 ? (
+      {filteredDevices.length === 0 ? (
+        <View style={styles.emptyBox}>
+          <AppIcon name="devices" size={48} color={theme.colors.outline} />
+          <AppText variant="subtitle1" color={theme.colors.outline}>
+            No devices found
+          </AppText>
+          {onAddDevice && (
+            <AppButton
+              label="Add New Device"
+              variant="outlined"
+              size="sm"
+              onPress={onAddDevice}
+            />
+          )}
+        </View>
+      ) : (
+        <View>
+          {filteredDevices.map((item) => (
+            <DeviceCard
+              key={item.id}
+              device={item}
+              onToggle={() => onToggle(item.id, item.isOn)}
+              onAdjustTemp={
+                onAdjustTemp ? (delta) => onAdjustTemp(item.id, delta) : undefined
+              }
+              onPress={onPressDevice ? () => onPressDevice(item.id) : undefined}
+              onRemove={onRemoveDevice ? () => onRemoveDevice(item.id) : undefined}
+            />
+          ))}
+          {onAddDevice && (
             <View style={styles.footer}>
               <AppButton
                 label="+ Add Device"
@@ -110,9 +106,9 @@ export const DeviceList: React.FC<DeviceListProps> = ({
                 onPress={onAddDevice}
               />
             </View>
-          ) : undefined
-        }
-      />
+          )}
+        </View>
+      )}
     </View>
   );
 };

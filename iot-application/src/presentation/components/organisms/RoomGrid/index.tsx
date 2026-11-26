@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { RoomCard } from '../RoomCard';
 import { AppText } from '../../atoms/AppText';
@@ -27,33 +27,33 @@ export const RoomGrid: React.FC<RoomGridProps> = ({
         )}
       </View>
 
-      <FlatList
-        data={rooms}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const roomDevices = devices.filter((d) => d.roomId === item.id);
-          return (
-            <RoomCard
-              room={item}
-              devices={roomDevices}
-              onPress={() => onSelectRoom(item.id, item.name)}
-              onRename={onRenameRoom ? () => onRenameRoom(item.id, item.name) : undefined}
-              onDelete={onDeleteRoom ? () => onDeleteRoom(item.id) : undefined}
-            />
-          );
-        }}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <AppIcon name="home-plus-outline" size={48} color={theme.colors.outline} />
-            <AppText variant="subtitle1" color={theme.colors.outline}>
-              No rooms yet
-            </AppText>
-            {onAddRoom && (
-              <AppButton label="Create First Room" size="sm" onPress={onAddRoom} />
-            )}
-          </View>
-        }
-      />
+      {rooms.length === 0 ? (
+        <View style={styles.empty}>
+          <AppIcon name="home-plus-outline" size={48} color={theme.colors.outline} />
+          <AppText variant="subtitle1" color={theme.colors.outline}>
+            No rooms yet
+          </AppText>
+          {onAddRoom && (
+            <AppButton label="Create First Room" size="sm" onPress={onAddRoom} />
+          )}
+        </View>
+      ) : (
+        <View>
+          {rooms.map((item) => {
+            const roomDevices = devices.filter((d) => d.roomId === item.id);
+            return (
+              <RoomCard
+                key={item.id}
+                room={item}
+                devices={roomDevices}
+                onPress={() => onSelectRoom(item.id, item.name)}
+                onRename={onRenameRoom ? () => onRenameRoom(item.id, item.name) : undefined}
+                onDelete={onDeleteRoom ? () => onDeleteRoom(item.id) : undefined}
+              />
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 };

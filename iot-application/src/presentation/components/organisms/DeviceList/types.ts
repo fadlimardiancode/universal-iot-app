@@ -1,5 +1,7 @@
 import { Device } from '../../../../domain/entities/Device';
 
+export type FilterType = 'all' | 'on' | 'off';
+
 export interface DeviceListProps {
   devices: Device[];
   loading?: boolean;
