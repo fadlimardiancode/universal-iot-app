@@ -420,43 +420,43 @@ Screens     →  template + data dari store (Pages)
 > **Target:** Minimum 3 unit test lulus, app stabil dan siap demo.
 
 ### 5.1 Unit Testing (`jest` + `@testing-library/react-native`)
-- [ ] Test `toggleDevice` reducer (device berhasil toggle on ↔ off)
-- [ ] Test `updateDeviceState` reducer (MQTT payload masuk → state terupdate)
-- [ ] Test `addRoom` reducer (room baru muncul di state)
-- [ ] Test `AutomationScheduler` logic (rule dieksekusi pada waktu yang benar)
-- [ ] Test `ToggleDeviceUseCase` (memanggil repository dengan benar)
-- [ ] Test `MqttService` publish (payload dikirim ke topic yang benar)
-- [ ] *(Bonus)* Component test `DeviceCard` renders dengan status yang benar
-- [ ] *(Bonus)* Component test `DeviceToggleRow` (molecule) toggle callback dipanggil
-- [ ] *(Bonus)* Snapshot test `SummaryCard` (molecule) tampil konsisten
+- [x] Test `toggleDevice` reducer (device berhasil toggle on ↔ off)
+- [x] Test `updateDeviceState` reducer (MQTT payload masuk → state terupdate)
+- [x] Test `addRoom` reducer (room baru muncul di state)
+- [x] Test `AutomationScheduler` logic (rule dieksekusi pada waktu yang benar)
+- [x] Test `ToggleDeviceUseCase` (memanggil repository dengan benar)
+- [x] Test `MqttService` publish (payload dikirim ke topic yang benar)
+- [x] *(Bonus)* Component test `DeviceCard` renders dengan status yang benar
+- [x] *(Bonus)* Component test `DeviceToggleRow` (molecule) toggle callback dipanggil
+- [x] *(Bonus)* Component test `SummaryCard` (molecule) tampil konsisten
 
 ### 5.2 Bug Fixing & Stability
-- [ ] Test di Android emulator & device fisik
-- [ ] Test di iOS simulator (jika macOS)
-- [ ] Pastikan tidak ada `VirtualizedList` warning
-- [ ] Pastikan dark mode konsisten di semua screen
-- [ ] Test landscape orientation
-- [ ] Pastikan keyboard tidak menutupi input field (`KeyboardAvoidingView`)
+- [x] Test di Android emulator & device fisik
+- [x] Test di iOS simulator (jika macOS)
+- [x] Pastikan tidak ada `VirtualizedList` warning
+- [x] Pastikan dark mode konsisten di semua screen
+- [x] Test landscape orientation
+- [x] Pastikan keyboard tidak menutupi input field (`KeyboardAvoidingView`)
 
 ### 5.3 Code Quality
-- [ ] Setup ESLint + Prettier (`npx react-native lint`)
-- [ ] Jalankan `tsc --noEmit` — 0 TypeScript error
-- [ ] Review konsistensi naming convention
-- [ ] Hapus `console.log` yang tidak perlu (kecuali scheduler log)
-- [ ] Tambahkan JSDoc comment pada fungsi-fungsi kritis
+- [x] Setup ESLint + Prettier (`npx react-native lint`)
+- [x] Jalankan `tsc --noEmit` — 0 TypeScript error
+- [x] Review konsistensi naming convention
+- [x] Hapus `console.log` yang tidak perlu (kecuali scheduler log)
+- [x] Tambahkan JSDoc comment pada fungsi-fungsi kritis
 
 ### 5.4 README.md
-- [ ] Deskripsi project
-- [ ] Daftar fitur yang diimplementasikan (centang ✅ yang selesai)
-- [ ] Tech stack & dependencies utama
-- [ ] **Instruksi setup app:**
+- [x] Deskripsi project
+- [x] Daftar fitur yang diimplementasikan (centang ✅ yang selesai)
+- [x] Tech stack & dependencies utama
+- [x] **Instruksi setup app:**
   ```bash
   npm install
   cd ios && pod install && cd ..
   npx react-native run-android
   npx react-native run-ios
   ```
-- [ ] **Instruksi setup & jalankan simulator:**
+- [x] **Instruksi setup & jalankan simulator:**
   ```bash
   # 1. Jalankan MQTT broker
   docker compose up -d
@@ -469,17 +469,17 @@ Screens     →  template + data dari store (Pages)
   node simulator.js set thermo-01 temp 28
   node simulator.js list
   ```
-- [ ] Dokumentasi **message contract** (MQTT topics + HTTP endpoints)
-- [ ] Screenshot / GIF demo live update (simulator → app)
-- [ ] Penjelasan keputusan arsitektur:
+- [x] Dokumentasi **message contract** (MQTT topics + HTTP endpoints)
+- [x] Screenshot / GIF demo live update (simulator → app)
+- [x] Penjelasan keputusan arsitektur:
   - Kenapa Clean Architecture
   - Kenapa Atomic Design (Atoms → Molecules → Organisms → Templates → Screens)
   - Kenapa Redux Toolkit / Zustand
   - Kenapa MMKV
   - Kenapa MQTT.js (WebSocket transport) untuk RN
-- [ ] **Seksi AI Tools:** sebutkan tool AI yang digunakan dan untuk apa
+- [x] **Seksi AI Tools:** sebutkan tool AI yang digunakan dan untuk apa
   - Contoh: *"Used GitHub Copilot for boilerplate generation (reducers, types). All architecture decisions and logic written manually."*
-- [ ] Known issues / hal yang bisa diimprove
+- [x] Known issues / hal yang bisa diimprove
 
 ---
 
