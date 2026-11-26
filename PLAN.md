@@ -163,9 +163,9 @@ POST /devices/<deviceId>/set  ← {"on": false}
 > **Target:** Model data, MQTT client, HTTP client, dan state management siap digunakan.
 
 ### 3.1 Entities & TypeScript Types
-- [ ] Buat `DeviceType` enum: `'light' | 'thermostat' | 'camera' | 'lock'`
-- [ ] Buat `DeviceStatus` type: `'online' | 'offline'`
-- [ ] Buat interface `Device`:
+- [x] Buat `DeviceType` enum: `'light' | 'thermostat' | 'camera' | 'lock'`
+- [x] Buat `DeviceStatus` type: `'online' | 'offline'`
+- [x] Buat interface `Device` (`src/domain/entities/Device.ts`):
   ```ts
   interface Device {
     id: string;
@@ -180,106 +180,68 @@ POST /devices/<deviceId>/set  ← {"on": false}
     isLocked?: boolean;      // lock
   }
   ```
-- [ ] Buat interface `Room`:
-  ```ts
-  interface Room { id: string; name: string; }
-  ```
-- [ ] Buat interface `Automation`:
-  ```ts
-  interface Automation {
-    id: string;
-    name: string;
-    deviceId: string;
-    action: 'turnOn' | 'turnOff' | 'setTemperature';
-    scheduledTime: string;   // "HH:mm"
-    isActive: boolean;
-    value?: number;
-  }
-  ```
-- [ ] Buat interface `MqttStatePayload` & `MqttSetPayload` sesuai message contract
+- [x] Buat interface `Room` (`src/domain/entities/Room.ts`)
+- [x] Buat interface `Automation` (`src/domain/entities/Automation.ts`)
+- [x] Buat interface `MqttStatePayload` & `MqttSetPayload` sesuai message contract
 
 ### 3.2 MQTT Service (Data Source)
-- [ ] Buat `src/data/datasources/MqttService.ts`:
-  - Gunakan library `mqtt` (MQTT.js) dengan **WebSocket transport** (ws:// atau wss://)
-  - Config broker URL dari `src/core/constants/config.ts` (env-aware: local vs public)
+- [x] Buat `src/data/datasources/MqttService.ts`:
+  - Menggunakan library `mqtt` (MQTT.js) dengan WebSocket transport (`ws://` / `wss://`)
+  - Config broker URL dari `src/core/constants/config.ts`
   - Method `connect()` → connect ke broker, subscribe ke `home/+/state` dan `home/+/status`
-  - Method `publish(topic, payload)` → publish ke `home/<deviceId>/set`
+  - Method `publishCommand(deviceId, payload)` → publish ke `home/<deviceId>/set`
   - Method `disconnect()`
-  - Event emitter / callback saat menerima pesan
-- [ ] Buat `src/core/constants/config.ts`:
-  ```ts
-  export const MQTT_BROKER_URL = 'ws://localhost:9001';     // local Docker
-  // export const MQTT_BROKER_URL = 'wss://test.mosquitto.org:8081'; // fallback
-  export const MQTT_TOPIC_PREFIX = 'home/iot-demo-abc123';  // unique prefix
-  export const HTTP_BASE_URL = 'http://localhost:3001';
-  ```
-- [ ] Handle koneksi ulang otomatis (`reconnectPeriod: 3000`)
-- [ ] Handle pesan retained `status` → update `DeviceStatus` di store
+  - Callback listeners: `onDeviceState`, `onDeviceStatus`, `onConnection`
+- [x] Setup `src/core/constants/config.ts` (port 9001 WebSocket & port 3001 HTTP)
+- [x] Handle koneksi ulang otomatis (`reconnectPeriod: 5000`)
+- [x] Handle pesan retained `status` → update `DeviceStatus` di store
 
 ### 3.3 HTTP Service (Data Source)
-- [ ] Buat `src/data/datasources/HttpService.ts` menggunakan `axios`:
+- [x] Buat `src/data/datasources/HttpService.ts` menggunakan `axios`:
   - `fetchDevices()` → `GET /devices` → return `Device[]`
   - `fetchDevice(id)` → `GET /devices/:id` → return `Device`
   - `setDeviceState(id, payload)` → `POST /devices/:id/set`
-- [ ] Setup `axios` instance dengan `baseURL` dari `config.ts` dan timeout 10s
-- [ ] Handle error (network error, 404, 500) → return fallback mock jika gagal
+  - `fetchRooms()` → `GET /rooms` → return `Room[]`
+  - `fetchAutomations()` → `GET /automations` → return `Automation[]`
+- [x] Setup `axios` instance dengan `baseURL` dari `config.ts` dan timeout 5s
+- [x] Handle fallback ke MMKV cache dan mock data saat server offline
 
 ### 3.4 Mock Fallback Data Source
-- [ ] Buat `src/data/datasources/MockDeviceDataSource.ts` (data fallback / offline):
-  - Initial device list (sinkron dengan `simulator/db.json`)
-  - **Living Room:** Smart Light, Smart Lock, Camera
-  - **Bedroom:** Smart Light, Thermostat
-  - **Kitchen:** Smart Light, Camera
-- [ ] Buat `MockRoomDataSource.ts`
-- [ ] Buat `MockAutomationDataSource.ts` (1-2 contoh rule)
-- [ ] Buat `MockHistoricalTemperature.ts` (24 data point untuk bonus chart)
-- [ ] App auto-fallback ke mock jika HTTP/MQTT tidak tersedia
+- [x] Buat `src/data/datasources/MockDeviceDataSource.ts` (6 devices sinkron dengan `backend/db.json`)
+- [x] Buat `src/data/datasources/MockRoomDataSource.ts` (3 rooms default)
+- [x] Buat `src/data/datasources/MockAutomationDataSource.ts` (2 contoh automation rules)
+- [x] Buat `src/data/datasources/MockHistoricalTemperature.ts` (data 24 jam untuk chart)
+- [x] App auto-fallback ke local storage & mock jika HTTP/MQTT offline
 
 ### 3.5 Repository Interfaces & Implementations
-- [ ] Abstract `IDeviceRepository` di domain layer
-- [ ] `DeviceRepositoryImpl`: 
-  - Init state dari `HttpService.fetchDevices()` → fallback ke mock
-  - Subscribe MQTT `home/+/state` → update state device di store secara real-time
-  - `setDevice(id, payload)` → publish MQTT `home/:id/set` + call `HttpService.setDeviceState`
-- [ ] Abstract `IRoomRepository` → `RoomRepositoryImpl`
-- [ ] Abstract `IAutomationRepository` → `AutomationRepositoryImpl`
+- [x] Abstract `IDeviceRepository` di domain layer
+- [x] `DeviceRepositoryImpl`: 
+  - Init state dari `HttpService.fetchDevices()` dengan fallback
+  - Sinkronisasi state via MQTT `home/+/state` & retained `home/+/status`
+  - `toggleDevice`, `adjustTemperature`, `addDevice`, `removeDevice`
+- [x] Abstract `IRoomRepository` → `RoomRepositoryImpl`
+- [x] Abstract `IAutomationRepository` → `AutomationRepositoryImpl`
 
 ### 3.6 Local Storage (MMKV)
-- [ ] Buat `StorageService.ts` wrapper untuk MMKV
-- [ ] Implementasi `persistDevice()`, `loadDevices()`, `persistRooms()`, dst.
-- [ ] Integrasikan storage ke repository (load on init, persist on mutation)
-- [ ] MMKV hanya untuk: preferensi user (tema, bahasa), automations, dan room config
+- [x] Buat `StorageService.ts` wrapper untuk MMKV v3
+- [x] Implementasi persist & load devices, rooms, automations, dan theme
+- [x] Cache terintegrasi di repository layer (load on init, persist on mutation)
 
 ### 3.7 Use Cases
-- [ ] `GetDevicesUseCase`
-- [ ] `ToggleDeviceUseCase` → publish MQTT + update local state
-- [ ] `AdjustTemperatureUseCase` → publish MQTT + update local state
-- [ ] `AddDeviceUseCase`
-- [ ] `RemoveDeviceUseCase`
-- [ ] `GetRoomsUseCase`
-- [ ] `AddRoomUseCase`
-- [ ] `RenameRoomUseCase`
-- [ ] `DeleteRoomUseCase`
-- [ ] `GetAutomationsUseCase`
-- [ ] `AddAutomationUseCase`
-- [ ] `ToggleAutomationUseCase`
+- [x] `GetDevicesUseCase`, `ToggleDeviceUseCase`, `AdjustTemperatureUseCase`, `AddDeviceUseCase`, `RemoveDeviceUseCase`
+- [x] `GetRoomsUseCase`, `AddRoomUseCase`, `RenameRoomUseCase`, `DeleteRoomUseCase`
+- [x] `GetAutomationsUseCase`, `AddAutomationUseCase`, `ToggleAutomationUseCase`, `DeleteAutomationUseCase`
+- [x] Unit test use cases di `__tests__/usecases.test.ts`
 
-### 3.8 Redux Store / Zustand Stores
-- [ ] **deviceSlice** (state: `devices[]`, `loading`, `error`, `mqttConnected`)
-  - reducers: `setDevices`, `updateDeviceState`, `updateDeviceStatus`, `toggleDevice`, `addDevice`, `removeDevice`, `adjustTemperature`
-  - `updateDeviceState` → dipanggil ketika MQTT message masuk (`home/+/state`)
-  - `updateDeviceStatus` → dipanggil ketika MQTT `home/+/status` masuk (`online`/`offline`)
-- [ ] **roomSlice** (state: `rooms[]`)
-  - reducers: `addRoom`, `renameRoom`, `deleteRoom`
-- [ ] **automationSlice** (state: `automations[]`)
-  - reducers: `addAutomation`, `toggleAutomation`, `deleteAutomation`
-- [ ] **themeSlice** (state: `'light' | 'dark'`)
-  - reducers: `toggleTheme`, `setTheme`
-- [ ] **connectivitySlice** (state: `mqttConnected`, `httpReachable`)
-  - Tampilkan banner "Offline Mode" di UI jika keduanya gagal
-- [ ] Setup Redux store di `src/presentation/store/index.ts`
-- [ ] Bungkus `App.tsx` dengan `<Provider store={store}>`
-- [ ] Inisialisasi `MqttService` di `App.tsx` → dispatch `updateDeviceState` on message
+### 3.8 Redux Store
+- [x] **deviceSlice** (`devices[]`, `loading`, `error`, thunks: fetchDevices, toggleDeviceAction, adjustTemperatureAction, reducers: updateDeviceFromMqtt, updateDeviceStatusFromMqtt)
+- [x] **roomSlice** (`rooms[]`, `loading`, `error`, thunks: fetchRooms, addRoomAction, renameRoomAction, deleteRoomAction)
+- [x] **automationSlice** (`automations[]`, `loading`, `error`, thunks: fetchAutomations, addAutomationAction, toggleAutomationAction, deleteAutomationAction)
+- [x] **themeSlice** (`'light' | 'dark' | 'system'`)
+- [x] **connectivitySlice** (`mqttConnected`, `httpReachable`)
+- [x] Setup Redux store di `src/presentation/store/index.ts`
+- [x] Integrasi `App.tsx` dengan Redux Provider, `MqttService.connect()`, dan live device list
+- [x] Unit test Redux slices (7 test suites, 15 tests passed)
 
 ---
 

@@ -1,0 +1,58 @@
+import { Device } from '../../domain/entities/Device';
+
+export const INITIAL_MOCK_DEVICES: Device[] = [
+  {
+    id: 'light-01',
+    name: 'Living Room Light',
+    type: 'light',
+    roomId: 'room-1',
+    isOn: true,
+    brightness: 80,
+    status: 'online',
+  },
+  {
+    id: 'lock-01',
+    name: 'Front Door Lock',
+    type: 'lock',
+    roomId: 'room-1',
+    isOn: false,
+    isLocked: true,
+    status: 'online',
+  },
+  {
+    id: 'cam-01',
+    name: 'Living Room Camera',
+    type: 'camera',
+    roomId: 'room-1',
+    isOn: true,
+    status: 'online',
+  },
+  {
+    id: 'thermo-01',
+    name: 'Bedroom Thermostat',
+    type: 'thermostat',
+    roomId: 'room-2',
+    isOn: true,
+    temperature: 24.0,
+    humidity: 61,
+    status: 'online',
+  },
+  {
+    id: 'light-02',
+    name: 'Bedroom Light',
+    type: 'light',
+    roomId: 'room-2',
+    isOn: false,
+    brightness: 60,
+    status: 'online',
+  },
+  {
+    id: 'light-03',
+    name: 'Kitchen Light',
+    type: 'light',
+    roomId: 'room-3',
+    isOn: true,
+    brightness: 100,
+    status: 'online',
+  },
+];

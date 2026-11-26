@@ -24,3 +24,13 @@ jest.mock('react-native-mmkv', () => {
 
 // Mock react-native-vector-icons
 jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => 'Icon');
+
+// Mock mqtt for test environment
+jest.mock('mqtt', () => ({
+  connect: jest.fn(() => ({
+    on: jest.fn(),
+    subscribe: jest.fn(),
+    publish: jest.fn(),
+    end: jest.fn(),
+  })),
+}));
