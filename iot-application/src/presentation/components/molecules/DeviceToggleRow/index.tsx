@@ -88,17 +88,15 @@ export const DeviceToggleRow: React.FC<DeviceToggleRowProps> = ({
             </AppText>
             <AppBadge
               content={protocol.toUpperCase()}
-              size={12}
               color={protocol === 'http' ? '#0D6EFD' : '#6610F2'}
             />
             <AppBadge
               content={status}
-              size={12}
               color={status === 'online' ? '#198754' : '#6C757D'}
             />
           </View>
           {subtitle ? (
-            <AppText variant="caption" color={theme.colors.outline}>
+            <AppText variant="caption" color={theme.colors.onSurfaceVariant}>
               {subtitle}
             </AppText>
           ) : null}

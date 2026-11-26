@@ -87,7 +87,6 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <AppBadge
             content={(device.protocol || 'mqtt').toUpperCase()}
-            size={12}
             color={device.protocol === 'http' ? '#0D6EFD' : '#6610F2'}
           />
           <StatusChip status={device.status} size="sm" />
@@ -105,7 +104,7 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
           {device.isOn ? (
             <>
               <View style={styles.cameraBadge}>
-                <AppBadge content="LIVE" color="#DC3545" size={14} />
+                <AppBadge content="LIVE" color="#DC3545" />
               </View>
               <AppIcon name="play-circle-outline" size={44} color="#FFFFFF" />
               <AppText variant="caption" color="#FFFFFF">

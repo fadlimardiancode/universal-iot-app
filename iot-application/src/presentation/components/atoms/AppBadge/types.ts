@@ -1,4 +1,4 @@
-import { StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle, TextStyle } from 'react-native';
 
 export interface AppBadgeProps {
   content?: string | number;
@@ -7,4 +7,5 @@ export interface AppBadgeProps {
   textColor?: string;
   visible?: boolean;
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
